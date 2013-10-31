@@ -8,13 +8,13 @@ var msgbox;
 function init()
 {
 	// pull out the relevant elements
-	var renderContainer = $('div#container')[0];
 	msgbox = $('p#message')[0];
 
 	// set up the renderer
-	renderer = new THREE.WebGLRenderer();
+	renderer = new THREE.WebGLRenderer({
+		canvas: $('canvas#renderPlane')[0],
+	});
 	renderer.setSize(width,height);
-	renderContainer.appendChild( renderer.domElement );
 
 	// set up the scene
 	scene = new THREE.Scene();
@@ -22,21 +22,36 @@ function init()
 	// set up the camera
 	var camera = new THREE.OrthographicCamera(width/-2, width/2, height/2, height/-2, 1, 1000);
 	scene.add(camera);
+	
+	var vertShader, fragShader;
+	function generateFractal(type, data)
+	{
+		// wait until both are loaded to continue
+		if( type === 'vert' && !vertShader )
+			vertShader = data;
+		if( type === 'frag' && !fragShader )
+			fragShader = data;
+		if( !vertShader || !fragShader ) return;
 
-	var vertShader = $.get('shaders/fractal.vert.glsl').responseText;
-	var fragShader = $.get('shaders/fractal.frag.glsl').responseText;
-	debugger;
+		// create the fractal plane and add to scene
+		var fractalMaterial = new THREE.ShaderMaterial({
+			vertexShader: vertShader,
+			fragmentShader: fragShader
+		});
+		var plane = new THREE.Mesh( new THREE.PlaneGeometry(width,height), fractalMaterial );
+		scene.add(plane);
 
-	var fractalMaterial = new THREE.ShaderMaterial({
-		vertexShader: vertShader,
-		fragmentShader: fragShader
-	});
-	var plane = new THREE.Mesh( new THREE.PlaneGeometry(width,height), fractalMaterial );
-	scene.add(plane);
+		// start the render
+		renderer.render(scene,camera);
+	}
 
+	$.get('shaders/fractal.vert.glsl', function(data){generateFractal('vert',data);});
+	$.get('shaders/fractal.frag.glsl', function(data){generateFractal('frag',data);});
+		
 	// announce completion
 	msgbox.innerHTML = 'No errors';
 	console.log('Initialized');
 }
+
 
 $(document).ready(init);

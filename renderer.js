@@ -3,6 +3,7 @@ var width = 1280, height = 720;
 
 var renderer;
 var scene;
+var plane;
 var msgbox;
 
 function init()
@@ -22,8 +23,10 @@ function init()
 
 	// set up the camera
 	var camera = new THREE.OrthographicCamera(width/-2, width/2, height/2, height/-2, 1, 1000);
+	camera.position.z = 5;
 	scene.add(camera);
-	
+
+
 	var vertShader, fragShader;
 	function generateFractal(type, data)
 	{
@@ -39,7 +42,13 @@ function init()
 			vertexShader: vertShader,
 			fragmentShader: fragShader,
 		});
-		var plane = new THREE.Mesh( new THREE.PlaneGeometry(width,height), fractalMaterial );
+		plane = new THREE.Mesh( new THREE.PlaneGeometry(width,height), fractalMaterial );
+		plane.geometry.faceVertexUvs[0][0][0] = {x: -2, y: 2};
+		plane.geometry.faceVertexUvs[0][0][1] = {x: -2, y: -2};
+		plane.geometry.faceVertexUvs[0][0][2] = {x: 2, y: 2};
+		plane.geometry.faceVertexUvs[0][1][1] = {x: 2, y: -2};
+		plane.geometry.faceVertexUvs[0][1][0] = {x: -2, y: -2};
+		plane.geometry.faceVertexUvs[0][1][2] = {x: 2, y: 2};
 		scene.add(plane);
 
 		// start the render
@@ -51,7 +60,6 @@ function init()
 	$.get('shaders/fractal.frag.glsl', function(data){generateFractal('frag',data);});
 		
 	// announce completion
-	msgbox.innerHTML = 'No errors';
 	console.log('Initialized');
 }
 

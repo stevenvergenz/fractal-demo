@@ -1,10 +1,10 @@
 #define MAX_ITER 100
 
-varying vec4 vertPos;
+varying vec2 windowCoord;
 
 void main()
 {
-	vec2 c = vertPos.xy;
+	vec2 c = windowCoord;
 	vec2 z = vec2(0.0);
 	int iterCount;
 

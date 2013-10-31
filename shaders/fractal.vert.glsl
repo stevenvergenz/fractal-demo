@@ -1,7 +1,7 @@
-varying vec4 vertPos;
+varying vec2 windowCoord;
 
 void main()
 {
-	vertPos = modelViewMatrix * vec4(position,1.0);
-	gl_Position = modelViewMatrix * vec4(position,1.0);
+	windowCoord = uv;
+	gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);
 }

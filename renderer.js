@@ -13,6 +13,7 @@ function init()
 	// set up the renderer
 	renderer = new THREE.WebGLRenderer({
 		canvas: $('canvas#renderPlane')[0],
+		clearColor: 0xffffff
 	});
 	renderer.setSize(width,height);
 
@@ -36,12 +37,13 @@ function init()
 		// create the fractal plane and add to scene
 		var fractalMaterial = new THREE.ShaderMaterial({
 			vertexShader: vertShader,
-			fragmentShader: fragShader
+			fragmentShader: fragShader,
 		});
 		var plane = new THREE.Mesh( new THREE.PlaneGeometry(width,height), fractalMaterial );
 		scene.add(plane);
 
 		// start the render
+		console.log('Rendering');
 		renderer.render(scene,camera);
 	}
 

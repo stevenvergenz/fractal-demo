@@ -72,8 +72,7 @@ function draw()
 function generateLookAt()
 {
 	// create view matrix
-	var scaleFactor = (3/height)/Math.pow(2,zoom);
-	//viewMat = new THREE.Matrix3(scaleFactor,0,0,0,scaleFactor,0,-center.x,-center.y,1);
+	var scaleFactor = (2.5/height)/Math.pow(2,zoom);
 	viewMat = new THREE.Matrix3(scaleFactor,0,center.x,0,scaleFactor,center.y,0,0,1);
 	var elems = Array.prototype.slice.call(viewMat.elements);
 
@@ -96,7 +95,7 @@ function handleClick(evt)
 
 	// handle scale
 	if( evt.button == 0 ){
-		zoom += 1;
+		zoom = zoom < 16 ? zoom+1 : 16;
 	}
 	else if( evt.button == 2 ){
 		zoom = zoom > 0 ? zoom-1 : 0;

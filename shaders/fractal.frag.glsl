@@ -5,6 +5,7 @@ varying vec2 windowCoord;
 void main()
 {
 	vec2 c = windowCoord;
+	//vec2 c = vec2(0.0,1.0);
 	vec2 z = vec2(0.0);
 	int iterCount;
 

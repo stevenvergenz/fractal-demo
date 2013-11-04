@@ -1,5 +1,6 @@
 #define MAX_ITER 100
 #define BAIL_RAD 2.0
+
 varying vec2 windowCoord;
 
 void main()

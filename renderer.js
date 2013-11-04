@@ -5,7 +5,6 @@ var renderer;
 var scene;
 var plane;
 var camera;
-var msgbox;
 
 var center = {x:-0.5,y:0};
 var zoom = 0;
@@ -14,9 +13,6 @@ var viewUni = [new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()];
 
 function init()
 {
-	// pull out the relevant elements
-	msgbox = $('p#message')[0];
-
 	// set up the renderer
 	renderer = new THREE.WebGLRenderer({
 		canvas: $('canvas#renderPlane')[0],
@@ -89,9 +85,11 @@ function handleClick(evt)
 	// map canvas coords to view space
 	var clickCoord = new THREE.Vector3(evt.offsetX-width/2, -evt.offsetY+height/2, 1);
 	clickCoord.applyMatrix3(viewMat);
+	clickCoord.z = 0;
 
 	// focus image there
-	center = {x: clickCoord.x, y: clickCoord.y};
+	if( clickCoord.length() < 2 )
+		center = {x: clickCoord.x, y: clickCoord.y};
 
 	// handle scale
 	if( evt.button == 0 ){

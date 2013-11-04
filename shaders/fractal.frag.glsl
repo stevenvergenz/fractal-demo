@@ -21,7 +21,7 @@ void main()
 
 	if( iterCount < MAX_ITER ){
 		float mu = (float(iterCount) - log2(log(length(z))/log(BAIL_RAD)))/float(MAX_ITER);
-		gl_FragColor = mix( vec4(0.0,0.0,1.0,1.0), vec4(1.0,1.0,0.0,1.0), mu );
+		gl_FragColor = mix( vec4(0.0,0.0,0.5,1.0), vec4(1.0,1.0,0.0,1.0), mu );
 	}
 	else gl_FragColor = vec4(0.0,0.0,0.0,1.0);
 

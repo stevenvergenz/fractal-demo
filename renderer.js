@@ -4,7 +4,13 @@ var width = 1280, height = 720;
 var renderer;
 var scene;
 var plane;
+var camera;
 var msgbox;
+
+var center = {x:0.5,y:0};
+var zoom = 0;
+var viewMat = new THREE.Matrix3();
+var viewUni = [new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()];
 
 function init()
 {
@@ -14,15 +20,16 @@ function init()
 	// set up the renderer
 	renderer = new THREE.WebGLRenderer({
 		canvas: $('canvas#renderPlane')[0],
-		clearColor: 0xffffff
+		clearColor: 0xffffff,
 	});
 	renderer.setSize(width,height);
+	$('#renderPlane').click(handleClick);
 
 	// set up the scene
 	scene = new THREE.Scene();
 
 	// set up the camera
-	var camera = new THREE.OrthographicCamera(width/-2, width/2, height/2, height/-2, 1, 1000);
+	camera = new THREE.OrthographicCamera(width/-2, width/2, height/2, height/-2, 1, 1000);
 	camera.position.z = 5;
 	scene.add(camera);
 
@@ -41,19 +48,14 @@ function init()
 		var fractalMaterial = new THREE.ShaderMaterial({
 			vertexShader: vertShader,
 			fragmentShader: fragShader,
+			uniforms: {
+				'viewMat': {type: 'v3v', value: viewUni}
+			}
 		});
 		plane = new THREE.Mesh( new THREE.PlaneGeometry(width,height), fractalMaterial );
-		plane.geometry.faceVertexUvs[0][0][0] = {x: -2, y: 2};
-		plane.geometry.faceVertexUvs[0][0][1] = {x: -2, y: -2};
-		plane.geometry.faceVertexUvs[0][0][2] = {x: 2, y: 2};
-		plane.geometry.faceVertexUvs[0][1][1] = {x: 2, y: -2};
-		plane.geometry.faceVertexUvs[0][1][0] = {x: -2, y: -2};
-		plane.geometry.faceVertexUvs[0][1][2] = {x: 2, y: 2};
 		scene.add(plane);
-
-		// start the render
-		console.log('Rendering');
-		renderer.render(scene,camera);
+		
+		draw();
 	}
 
 	$.get('shaders/fractal.vert.glsl', function(data){generateFractal('vert',data);});
@@ -61,6 +63,31 @@ function init()
 		
 	// announce completion
 	console.log('Initialized');
+}
+
+function draw()
+{
+	generateLookAt();
+	console.log('Rendering');
+	renderer.render(scene,camera);
+}
+
+function generateLookAt()
+{
+	// create view matrix
+	var scaleFactor = (3/height)/Math.pow(2,zoom);
+	viewMat = new THREE.Matrix3(scaleFactor,0,0,0,scaleFactor,0,-center.x,-center.y,1);
+	var elems = Array.prototype.slice.call(viewMat.elements);
+
+	// convert to vec3[3] for uniforms
+	viewUni[0].set(elems[0],elems[3],elems[6]);
+	viewUni[1].set(elems[1],elems[4],elems[7]);
+	viewUni[2].set(elems[2],elems[5],elems[8]);
+}
+
+function handleClick(evt)
+{
+	console.log('Click at', evt.offsetX, evt.offsetY);
 }
 
 
